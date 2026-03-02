@@ -32,7 +32,7 @@ export default function PixelModal({ title, onClose, children }: Props) {
               fontSize: 9,
               color: "var(--accent-cyan)",
               textTransform: "uppercase",
-              letterSpacing: 1,
+              letterSpacing: 2,
             }}
           >
             ▶ {title}
