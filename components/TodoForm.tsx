@@ -42,7 +42,7 @@ export default function TodoForm({ onCreated }: Props) {
   return (
     <form onSubmit={submit} className="pixel-box-glow" style={{ padding: 16 }}>
       <div className="flex gap-2">
-        <input
+        <textarea
           className="pixel-input flex-1"
           placeholder="New Quest..."
           value={title}

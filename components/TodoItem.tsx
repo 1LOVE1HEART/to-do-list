@@ -112,7 +112,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
           <span
             className="flex-1"
             style={{
-              fontSize: 9,
+              fontSize:12,
               wordBreak: "break-word",
               textDecoration: todo.done ? "line-through" : "none",
               opacity: todo.done ? 0.45 : 1,
