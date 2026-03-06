@@ -89,6 +89,13 @@ export default function HomePage() {
         </div>
         <div className="flex gap-2">
           <a
+            href="/tryon"
+            className="pixel-btn pixel-btn-ghost"
+            style={{ fontSize: 7, padding: "6px 10px" }}
+          >
+            FIT CHECK
+          </a>
+          <a
             href="/admin"
             className="pixel-btn pixel-btn-ghost"
             style={{ fontSize: 7, padding: "6px 10px" }}

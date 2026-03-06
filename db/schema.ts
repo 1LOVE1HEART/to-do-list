@@ -42,13 +42,31 @@ export const loginAttempts = pgTable("login_attempts", {
   attemptedAt: timestamp("attempted_at").notNull().defaultNow(),
 });
 
+// ─── Tryon Results ───────────────────────────────────────────────────────────────
+export const tryonResults = pgTable("tryon_results", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  personImgUrl: text("person_img_url").notNull(),
+  garmentImgUrl: text("garment_img_url").notNull(),
+  resultImgUrl: text("result_img_url").notNull(),
+  category: varchar("category", { length: 20 }).notNull(), // upper_body | lower_body | dress
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // ─── Relations ─────────────────────────────────────────────────────────────────
 export const usersRelations = relations(users, ({ many }) => ({
   todos: many(todos),
+  tryonResults: many(tryonResults),
 }));
 
 export const todosRelations = relations(todos, ({ one }) => ({
   user: one(users, { fields: [todos.userId], references: [users.id] }),
+}));
+
+export const tryonResultsRelations = relations(tryonResults, ({ one }) => ({
+  user: one(users, { fields: [tryonResults.userId], references: [users.id] }),
 }));
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -56,3 +74,5 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Todo = typeof todos.$inferSelect;
 export type NewTodo = typeof todos.$inferInsert;
+export type TryonResult = typeof tryonResults.$inferSelect;
+export type NewTryonResult = typeof tryonResults.$inferInsert;
