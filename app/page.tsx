@@ -88,6 +88,7 @@ export default function HomePage() {
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Link href="/portfolio" className="btn btn-ghost btn-sm hide-sm">Portfolio</Link>
           <Link href="/tryon" className="btn btn-ghost btn-sm hide-sm">Fit Check</Link>
           <Link href="/admin" className="btn btn-ghost btn-sm hide-sm">Admin</Link>
           <div style={{
