@@ -22,28 +22,23 @@ export default function PixelModal({ title, onClose, children }: Props) {
       className="modal-overlay"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="modal-box pixel-box">
-        <div
-          className="flex justify-between items-center mb-4"
-          style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12 }}
-        >
-          <span
-            style={{
-              fontSize: 9,
-              color: "var(--accent-cyan)",
-              textTransform: "uppercase",
-              letterSpacing: 2,
-            }}
-          >
-            ▶ {title}
-          </span>
+      <div className="modal-box">
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 20,
+          paddingBottom: 16,
+          borderBottom: "1px solid var(--border)",
+        }}>
+          <h3 style={{ fontWeight: 600, color: "var(--text)" }}>{title}</h3>
           <button
             onClick={onClose}
-            className="pixel-btn pixel-btn-ghost"
-            style={{ padding: "4px 8px", fontSize: 10 }}
+            className="btn btn-ghost btn-icon btn-sm"
             aria-label="Close"
+            style={{ fontSize: "1.1rem", color: "var(--text-2)" }}
           >
-            ✕
+            ×
           </button>
         </div>
         {children}

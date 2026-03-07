@@ -6,6 +6,12 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import DeleteTryonButton from "./DeleteTryonButton";
 
+const CATEGORY_LABEL: Record<string, string> = {
+  upper_body: "Top",
+  lower_body: "Bottom",
+  dress: "Dress",
+};
+
 export default async function TryonHistoryPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
@@ -16,104 +22,96 @@ export default async function TryonHistoryPage() {
     .where(eq(tryonResults.userId, session.user.id))
     .orderBy(desc(tryonResults.createdAt));
 
-  const CATEGORY_LABEL: Record<string, string> = {
-    upper_body: "上衣",
-    lower_body: "下著",
-    dress: "連身洋裝",
-  };
-
   return (
-    <main style={{ minHeight: "100vh", padding: "24px 16px", maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <div style={{ fontSize: 14, color: "var(--accent-green)", letterSpacing: 3, textShadow: "0 0 15px rgba(0,255,136,0.4)" }}>
-            TRIPLE PLANCK
-          </div>
-          <div style={{ fontSize: 8, color: "var(--text-dim)", marginTop: 4, letterSpacing: 2 }}>
-            ▶ FIT CHECK HISTORY · {results.length} RECORDS
-          </div>
+      <header style={{
+        background: "var(--surface)", borderBottom: "1px solid var(--border)",
+        padding: "0 24px", height: 56, display: "flex", alignItems: "center",
+        justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)" }}>Fit Check History</span>
+          <span style={{
+            fontSize: "0.7rem", background: "var(--surface-2)", color: "var(--text-2)",
+            padding: "2px 8px", borderRadius: 99, fontWeight: 600, border: "1px solid var(--border)",
+          }}>
+            {results.length} saved
+          </span>
         </div>
-        <Link href="/tryon" className="pixel-btn pixel-btn-ghost" style={{ fontSize: 7, padding: "6px 10px" }}>
-          ← BACK
-        </Link>
-      </div>
+        <Link href="/tryon" className="btn btn-secondary btn-sm">← Back</Link>
+      </header>
 
-      {results.length === 0 ? (
-        <div
-          className="pixel-box"
-          style={{ padding: 60, textAlign: "center", color: "var(--text-muted)", fontSize: 9 }}
-        >
-          NO FIT CHECK RECORDS YET.<br />
-          <Link href="/tryon" style={{ color: "var(--accent-green)", textDecoration: "none", fontSize: 8, marginTop: 12, display: "block" }}>
-            ▶ START YOUR FIRST FIT CHECK
-          </Link>
-        </div>
-      ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
-          {results.map((r) => (
-            <div key={r.id} className="pixel-box" style={{ padding: 0, overflow: "hidden" }}>
-              {/* Result image */}
-              <div style={{ position: "relative" }}>
-                <img
-                  src={r.resultImgUrl}
-                  alt="Result"
-                  style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }}
-                />
+      <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px 64px" }}>
+        {results.length === 0 ? (
+          <div style={{
+            textAlign: "center", padding: "80px 24px",
+            background: "var(--surface)", border: "1px dashed var(--border)",
+            borderRadius: "var(--radius-lg)", color: "var(--text-2)",
+          }}>
+            <div style={{ fontSize: "2.5rem", marginBottom: 16 }}>👗</div>
+            <p style={{ fontWeight: 600, fontSize: "1rem", marginBottom: 8 }}>No fit checks yet</p>
+            <p style={{ fontSize: "0.85rem", color: "var(--text-3)", marginBottom: 24 }}>
+              Save some looks to see them here.
+            </p>
+            <Link href="/tryon" className="btn btn-primary">Start your first fit check</Link>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))", gap: 18 }}>
+            {results.map((r) => (
+              <div key={r.id} className="card" style={{ overflow: "hidden" }}>
+                {/* Result image */}
+                <div style={{ position: "relative" }}>
+                  <img
+                    src={r.resultImgUrl}
+                    alt="Result"
+                    style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }}
+                  />
+                  <span style={{
+                    position: "absolute", top: 10, left: 10,
+                    background: "var(--accent)", color: "#fff",
+                    fontSize: "0.72rem", padding: "3px 10px", borderRadius: 99, fontWeight: 600,
+                  }}>
+                    {CATEGORY_LABEL[r.category] ?? r.category}
+                  </span>
+                </div>
+
+                {/* Thumbnails */}
+                <div style={{ display: "flex", borderTop: "1px solid var(--border)" }}>
+                  <img src={r.personImgUrl} alt="Person" style={{ width: "50%", height: 80, objectFit: "cover", display: "block" }} />
+                  <div style={{ width: 1, background: "var(--border)" }} />
+                  <img src={r.garmentImgUrl} alt="Garment" style={{ width: "50%", height: 80, objectFit: "cover", display: "block" }} />
+                </div>
+
+                {/* Meta */}
                 <div style={{
-                  position: "absolute", top: 8, left: 8,
-                  background: "rgba(0,0,0,0.8)", padding: "3px 8px",
-                  fontSize: 7, color: "var(--accent-green)", letterSpacing: 1,
+                  padding: "12px 14px", borderTop: "1px solid var(--border)",
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
                 }}>
-                  {CATEGORY_LABEL[r.category] ?? r.category}
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-3)" }}>
+                    {new Date(r.createdAt).toLocaleDateString("zh-TW", {
+                      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+                    })}
+                  </span>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <a
+                      href={r.resultImgUrl}
+                      download
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-ghost btn-icon btn-sm"
+                      title="Download"
+                    >
+                      ↓
+                    </a>
+                    <DeleteTryonButton id={r.id} />
+                  </div>
                 </div>
               </div>
-
-              {/* Before / Garment thumbnails */}
-              <div style={{ display: "flex", gap: 0, borderTop: "1px solid var(--border)" }}>
-                <img
-                  src={r.personImgUrl}
-                  alt="Person"
-                  style={{ width: "50%", height: 80, objectFit: "cover", display: "block" }}
-                />
-                <div style={{ width: 1, background: "var(--border)" }} />
-                <img
-                  src={r.garmentImgUrl}
-                  alt="Garment"
-                  style={{ width: "50%", height: 80, objectFit: "cover", display: "block" }}
-                />
-              </div>
-
-              {/* Meta */}
-              <div style={{
-                padding: "10px 12px",
-                borderTop: "1px solid var(--border)",
-                display: "flex", justifyContent: "space-between", alignItems: "center",
-              }}>
-                <div style={{ fontSize: 7, color: "var(--text-muted)", letterSpacing: 1 }}>
-                  {new Date(r.createdAt).toLocaleDateString("zh-TW", {
-                    year: "numeric", month: "2-digit", day: "2-digit",
-                    hour: "2-digit", minute: "2-digit",
-                  })}
-                </div>
-                <div className="flex gap-2">
-                  <a
-                    href={r.resultImgUrl}
-                    download
-                    target="_blank"
-                    rel="noreferrer"
-                    className="pixel-btn pixel-btn-ghost"
-                    style={{ fontSize: 7, padding: "4px 8px", textDecoration: "none" }}
-                  >
-                    ↓
-                  </a>
-                  <DeleteTryonButton id={r.id} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

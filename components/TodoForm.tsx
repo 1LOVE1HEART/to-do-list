@@ -31,20 +31,29 @@ export default function TodoForm({ onCreated }: Props) {
       setDueDate("");
       setPriority("normal");
       setExpanded(false);
-      toast("任務新增！");
+      toast("Task added!");
     } else {
       const err = await res.json();
-      toast(err.error ?? "新增失敗", "error");
+      toast(err.error ?? "Failed to add", "error");
     }
     setLoading(false);
   }
 
   return (
-    <form onSubmit={submit} className="pixel-box-glow" style={{ padding: 16 }}>
-      <div className="flex gap-2">
+    <form
+      onSubmit={submit}
+      style={{
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius-lg)",
+        padding: "16px 18px",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <div style={{ display: "flex", gap: 10 }}>
         <textarea
-          className="pixel-input flex-1"
-          placeholder="New Quest..."
+          className="input"
+          placeholder="Add a new task…"
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
@@ -53,39 +62,40 @@ export default function TodoForm({ onCreated }: Props) {
           onFocus={() => setExpanded(true)}
           maxLength={500}
           autoComplete="off"
+          rows={expanded ? 2 : 1}
+          style={{ resize: "none", flexShrink: 1, flex: 1 }}
         />
         <button
           type="submit"
           disabled={loading || !title.trim()}
-          className="pixel-btn pixel-btn-green"
-          style={{ whiteSpace: "nowrap" }}
+          className="btn btn-primary"
+          style={{ alignSelf: "flex-end", flexShrink: 0 }}
         >
-          + ADD
+          {loading ? "…" : "+ Add"}
         </button>
       </div>
 
       {expanded && (
-        <div className="flex gap-4 mt-3" style={{ flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
           <div>
-            <label className="pixel-label">優先度</label>
+            <label className="label">Priority</label>
             <select
-              className="pixel-select"
+              className="select"
               value={priority}
               onChange={(e) => setPriority(e.target.value as any)}
             >
-              <option value="low">LOW</option>
-              <option value="normal">NORMAL</option>
-              <option value="high">HIGH</option>
+              <option value="low">Low</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
             </select>
           </div>
-          <div>
-            <label className="pixel-label">到期日（可選）</label>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <label className="label">Due date (optional)</label>
             <input
               type="date"
-              className="pixel-input"
+              className="input"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              style={{ minWidth: 160 }}
             />
           </div>
         </div>

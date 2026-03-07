@@ -16,15 +16,9 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
-    const result = await signIn("credentials", {
-      username,
-      password,
-      redirect: false,
-    });
-
+    const result = await signIn("credentials", { username, password, redirect: false });
     if (result?.error) {
-      setError("帳號或密碼錯誤，或帳號已被封鎖");
+      setError("Incorrect username or password, or account suspended.");
       setLoading(false);
     } else {
       router.push("/");
@@ -33,77 +27,59 @@ export default function LoginPage() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
-      }}
-    >
-      {/* Logo */}
-      <div style={{ textAlign: "center", marginBottom: 40 }}>
-        <div
-          style={{
-            fontSize: 22,
-            color: "var(--accent-green)",
-            letterSpacing: 4,
-            textShadow: "0 0 20px rgba(0,255,136,0.5)",
-            marginBottom: 8,
-          }}
-        >
-          TRIPLE PLANCK
+    <main style={{
+      minHeight: "100vh",
+      background: "var(--bg)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 20,
+    }}>
+      {/* Brand */}
+      <div style={{ textAlign: "center", marginBottom: 36 }}>
+        <div style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 99,
+          padding: "6px 16px",
+          marginBottom: 16,
+        }}>
+          <span style={{ fontSize: "1.1rem" }}>📋</span>
+          <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)" }}>Triple Planck</span>
         </div>
-        <div style={{ fontSize: 8, color: "var(--text-dim)" }}>
-          QUEST MANAGER v1.0
-        </div>
-        <div
-          style={{
-            marginTop: 12,
-            fontSize: 8,
-            color: "var(--accent-yellow)",
-          }}
-        >
-          ▶ INSERT COIN TO CONTINUE
-          <span className="cursor-blink" />
-        </div>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+          Welcome back
+        </h1>
+        <p style={{ marginTop: 6, fontSize: "0.875rem", color: "var(--text-2)" }}>
+          Sign in to manage your tasks
+        </p>
       </div>
 
-      {/* Login Box */}
-      <div className="pixel-box" style={{ width: "100%", maxWidth: 400, padding: 28 }}>
-        <div
-          style={{
-            fontSize: 10,
-            color: "var(--accent-cyan)",
-            marginBottom: 24,
-            textTransform: "uppercase",
-            letterSpacing: 2,
-          }}
-        >
-          ▶ Player Login
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Card */}
+      <div className="card-lg" style={{ width: "100%", maxWidth: 400, padding: 32 }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div>
-            <label htmlFor="login-username" className="pixel-label">Username</label>
+            <label htmlFor="login-username" className="label">Username</label>
             <input
               id="login-username"
-              className="pixel-input"
+              className="input"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
+              placeholder="your username"
               autoComplete="username"
               required
             />
           </div>
           <div>
-            <label htmlFor="login-password" className="pixel-label">Password</label>
+            <label htmlFor="login-password" className="label">Password</label>
             <input
               id="login-password"
-              className="pixel-input"
+              className="input"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -114,36 +90,27 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div
-              style={{
-                fontSize: 8,
-                color: "var(--accent-pink)",
-                padding: "8px 10px",
-                border: "1px solid var(--accent-pink)",
-                background: "rgba(255,45,120,0.05)",
-              }}
-            >
-              ✕ {error}
+            <div style={{
+              fontSize: "0.82rem",
+              color: "var(--danger)",
+              background: "var(--danger-soft)",
+              border: "1px solid var(--danger)",
+              borderRadius: "var(--radius-sm)",
+              padding: "10px 14px",
+            }}>
+              {error}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="pixel-btn pixel-btn-green w-full"
-            style={{ justifyContent: "center", marginTop: 8 }}
-          >
-            {loading ? "LOADING..." : "▶ START GAME"}
+          <button type="submit" disabled={loading} className="btn btn-primary" style={{ justifyContent: "center", marginTop: 4 }}>
+            {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <div style={{ marginTop: 20, fontSize: 8, color: "var(--text-muted)", textAlign: "center" }}>
-          新玩家？{" "}
-          <Link
-            href="/register"
-            style={{ color: "var(--accent-yellow)", textDecoration: "none" }}
-          >
-            CREATE ACCOUNT
+        <div style={{ marginTop: 20, textAlign: "center", fontSize: "0.82rem", color: "var(--text-2)" }}>
+          New user?{" "}
+          <Link href="/register" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
+            Create account
           </Link>
         </div>
       </div>

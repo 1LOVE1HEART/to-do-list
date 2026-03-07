@@ -37,8 +37,9 @@ function UploadZone({ label, hint, preview, onFile, disabled }: UploadZoneProps)
       style={{
         flex: 1,
         minHeight: 220,
-        border: `2px dashed ${dragging ? "var(--accent-green)" : "var(--border)"}`,
-        background: dragging ? "rgba(0,255,136,0.04)" : "var(--bg-card)",
+        border: `2px dashed ${dragging ? "var(--accent)" : "var(--border-2)"}`,
+        borderRadius: "var(--radius)",
+        background: dragging ? "var(--accent-soft)" : "var(--surface-2)",
         cursor: disabled ? "default" : "pointer",
         display: "flex",
         flexDirection: "column",
@@ -47,7 +48,6 @@ function UploadZone({ label, hint, preview, onFile, disabled }: UploadZoneProps)
         position: "relative",
         overflow: "hidden",
         transition: "border-color 0.2s, background 0.2s",
-        imageRendering: "pixelated",
       }}
     >
       <input
@@ -71,23 +71,23 @@ function UploadZone({ label, hint, preview, onFile, disabled }: UploadZoneProps)
           />
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)",
+            background: "linear-gradient(to top, rgba(44,36,32,0.5) 0%, transparent 55%)",
           }} />
           <div style={{
-            position: "absolute", bottom: 8,
-            fontSize: 7, color: "var(--accent-green)",
-            letterSpacing: 2, textShadow: "0 0 8px rgba(0,255,136,0.8)",
+            position: "absolute", bottom: 10,
+            fontSize: "0.75rem", color: "#fff", fontWeight: 600,
+            background: "rgba(44,36,32,0.5)", padding: "3px 10px", borderRadius: 99,
           }}>
-            ✓ {label.toUpperCase()} LOADED
+            ✓ {label} loaded
           </div>
         </>
       ) : (
         <>
-          <div style={{ fontSize: 32, marginBottom: 8, opacity: 0.4 }}>▣</div>
-          <div style={{ fontSize: 9, color: "var(--accent-green)", letterSpacing: 2, marginBottom: 6 }}>
-            {label.toUpperCase()}
+          <div style={{ fontSize: 36, marginBottom: 10, opacity: 0.35 }}>🖼️</div>
+          <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text)", marginBottom: 5 }}>
+            {label}
           </div>
-          <div style={{ fontSize: 7, color: "var(--text-muted)", textAlign: "center", lineHeight: 1.8 }}>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-2)", textAlign: "center", lineHeight: 1.6, padding: "0 16px" }}>
             {hint}
           </div>
         </>
@@ -96,13 +96,19 @@ function UploadZone({ label, hint, preview, onFile, disabled }: UploadZoneProps)
   );
 }
 
-const STATUS_TEXT: Record<Status, string> = {
+const STATUS_LABEL: Record<Status, string> = {
   idle: "",
-  uploading: "UPLOADING IMAGES...",
-  classifying: "ANALYZING GARMENT TYPE...",
-  processing: "AI PROCESSING... (20-60 SEC)",
-  done: "COMPLETE!",
-  error: "ERROR",
+  uploading: "Uploading images…",
+  classifying: "Identifying garment type…",
+  processing: "AI generating result… (20–60s)",
+  done: "Done!",
+  error: "Error",
+};
+
+const CATEGORY_LABEL: Record<string, string> = {
+  upper_body: "Top",
+  lower_body: "Bottom",
+  dress: "Dress",
 };
 
 export default function TryonPage() {
@@ -120,7 +126,6 @@ export default function TryonPage() {
     setPersonFile(file);
     setPersonPreview(URL.createObjectURL(file));
   }
-
   function handleGarmentFile(file: File) {
     setGarmentFile(file);
     setGarmentPreview(URL.createObjectURL(file));
@@ -156,14 +161,13 @@ export default function TryonPage() {
 
       if (!tryonRes.ok) {
         const err = await tryonRes.json();
-        throw new Error(err.error ?? "換裝請求失敗");
+        throw new Error(err.error ?? "Request failed");
       }
 
       const { predictionId, category: cat } = await tryonRes.json();
       setCategory(cat);
       setStatus("processing");
 
-      // Polling
       const startTime = Date.now();
       const timer = setInterval(() => {
         setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
@@ -175,7 +179,6 @@ export default function TryonPage() {
           `/api/tryon-status?predictionId=${predictionId}&personImgUrl=${encodeURIComponent(personImgUrl)}&garmentImgUrl=${encodeURIComponent(garmentImgUrl)}&category=${cat}`
         );
         const data = await statusRes.json();
-
         if (data.status === "succeeded") {
           clearInterval(timer);
           setResultUrl(data.resultImgUrl);
@@ -184,214 +187,156 @@ export default function TryonPage() {
         }
         if (data.status === "failed") {
           clearInterval(timer);
-          throw new Error(data.error ?? "換裝失敗");
+          throw new Error(data.error ?? "Generation failed");
         }
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       setStatus("error");
-      setErrorMsg(e.message ?? "未知錯誤");
+      setErrorMsg(e instanceof Error ? e.message : "Unknown error");
     }
   }
 
   const isProcessing = ["uploading", "classifying", "processing"].includes(status);
   const canStart = !!personFile && !!garmentFile && !isProcessing;
 
-  const CATEGORY_LABEL: Record<string, string> = {
-    upper_body: "上衣",
-    lower_body: "下著",
-    dress: "連身洋裝",
-  };
-
   return (
-    <main style={{ minHeight: "100vh", padding: "24px 16px", maxWidth: 720, margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <div style={{ fontSize: 14, color: "var(--accent-green)", letterSpacing: 3, textShadow: "0 0 15px rgba(0,255,136,0.4)" }}>
-            Now Look
-          </div>
-          <div style={{ fontSize: 8, color: "var(--text-dim)", marginTop: 4, letterSpacing: 2 }}>
-            ▶ FIT CHECK MODULE
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/" className="pixel-btn pixel-btn-ghost" style={{ fontSize: 7, padding: "6px 10px" }}>
-            ← BACK
-          </Link>
-          <Link href="/tryon/history" className="pixel-btn pixel-btn-ghost" style={{ fontSize: 7, padding: "6px 10px" }}>
-            HISTORY
-          </Link>
-        </div>
-      </div>
-
-      {/* Tip */}
-      <div className="pixel-box mb-6" style={{ fontSize: 8, color: "var(--text-dim)", lineHeight: 2, letterSpacing: 1 }}>
-        💡 TIP: 人物照建議<span style={{ color: "var(--accent-green)" }}>全身正面、背景單純</span>，效果更佳
-      </div>
-
-      {/* Upload zones */}
-      <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-        <UploadZone
-          label="PERSON PHOTO"
-          hint={"點擊或拖放圖片\n全身正面效果最佳"}
-          preview={personPreview}
-          onFile={handlePersonFile}
-          disabled={isProcessing}
-        />
-        <UploadZone
-          label="GARMENT PHOTO"
-          hint={"點擊或拖放圖片\n正面平鋪效果最佳"}
-          preview={garmentPreview}
-          onFile={handleGarmentFile}
-          disabled={isProcessing}
-        />
-      </div>
-
-      {/* Start button */}
-      <button
-        onClick={startTryon}
-        disabled={!canStart}
-        className=""
-        style={{
-          width: "100%",
-          color: "white",
-          fontSize: 10,
-          padding: "14px",
-          opacity: canStart ? 1 : 0.4,
-          cursor: canStart ? "pointer" : "not-allowed",
-          letterSpacing: 3,
-        }}
-      >
-        {isProcessing ? STATUS_TEXT[status] : "▶ START FIT CHECK"}
-      </button>
-
-      {/* Processing status */}
-      {isProcessing && (
-        <div className="pixel-box mt-4" style={{ textAlign: "center", padding: 20 }}>
-          <div style={{ fontSize: 9, color: "var(--accent-green)", letterSpacing: 2, marginBottom: 8 }}>
-            {STATUS_TEXT[status]}<span className="cursor-blink" />
-          </div>
-          {status === "processing" && (
-            <>
-              <div style={{ fontSize: 8, color: "var(--text-muted)", marginBottom: 12 }}>
-                {elapsedSeconds}s elapsed
-                {category && ` · 辨識為：${CATEGORY_LABEL[category] ?? category}`}
-              </div>
-              {/* Pixel progress animation */}
-              <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      width: 8, height: 8,
-                      background: "var(--accent-green)",
-                      animation: `pixelPulse 1.2s ${i * 0.15}s infinite`,
-                      opacity: 0.3,
-                    }}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* Error */}
-      {status === "error" && (
-        <div className="pixel-box mt-4" style={{
-          border: "1px solid var(--accent-pink)",
-          padding: 16, textAlign: "center",
-        }}>
-          <div style={{ fontSize: 9, color: "var(--accent-pink)", letterSpacing: 2, marginBottom: 4 }}>
-            ✕ ERROR
-          </div>
-          <div style={{ fontSize: 8, color: "var(--text-muted)" }}>{errorMsg}</div>
-        </div>
-      )}
-
-      {/* Result */}
-      {status === "done" && resultUrl && (
-        <div className="pixel-box mt-6" style={{ overflow: "hidden", padding: 0 }}>
-          <div style={{
-            padding: "12px 16px",
-            borderBottom: "1px solid var(--border)",
-            fontSize: 8, letterSpacing: 2,
-            color: "var(--accent-green)",
+      <header style={{
+        background: "var(--surface)", borderBottom: "1px solid var(--border)",
+        padding: "0 24px", height: 56, display: "flex", alignItems: "center",
+        justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)" }}>Now Look</span>
+          <span style={{
+            fontSize: "0.7rem", background: "var(--accent-soft)", color: "var(--accent)",
+            padding: "2px 8px", borderRadius: 99, fontWeight: 600,
           }}>
-            ✓ FIT CHECK COMPLETE · {CATEGORY_LABEL[category] ?? category}
-          </div>
-          <div style={{ display: "flex", gap: 0 }}>
-            {/* Before */}
-            <div style={{ flex: 1, position: "relative" }}>
-              <img
-                src={personPreview!}
-                alt="Before"
-                style={{ width: "100%", height: 400, objectFit: "cover", display: "block" }}
-              />
-              <div style={{
-                position: "absolute", top: 8, left: 8,
-                fontSize: 7, color: "var(--text-muted)",
-                background: "rgba(0,0,0,0.7)", padding: "3px 8px", letterSpacing: 1,
-              }}>BEFORE</div>
-            </div>
-            <div style={{ width: 1, background: "var(--border)" }} />
-            {/* After */}
-            <div style={{ flex: 1, position: "relative" }}>
-              <img
-                src={resultUrl}
-                alt="After"
-                style={{ width: "100%", height: 400, objectFit: "cover", display: "block" }}
-              />
-              <div style={{
-                position: "absolute", top: 8, left: 8,
-                fontSize: 7, color: "var(--accent-green)",
-                background: "rgba(0,0,0,0.7)", padding: "3px 8px", letterSpacing: 1,
-              }}>AFTER</div>
-            </div>
-          </div>
-          <div style={{ padding: "12px 16px", display: "flex", gap: 8 }}>
-            <a
-              href={resultUrl}
-              download="tryon-result.jpg"
-              target="_blank"
-              rel="noreferrer"
-              className="pixel-btn"
-              style={{ fontSize: 7, padding: "6px 12px", textDecoration: "none" }}
-            >
-              ↓ DOWNLOAD
-            </a>
-            <Link
-              href="/tryon/history"
-              className="pixel-btn pixel-btn-ghost"
-              style={{ fontSize: 7, padding: "6px 12px" }}
-            >
-              VIEW HISTORY
-            </Link>
-            <button
-              onClick={() => {
-                setStatus("idle");
-                setResultUrl(null);
-                setPersonFile(null);
-                setGarmentFile(null);
-                setPersonPreview(null);
-                setGarmentPreview(null);
-                setElapsedSeconds(0);
-              }}
-              className="pixel-btn pixel-btn-ghost"
-              style={{ fontSize: 7, padding: "6px 12px", marginLeft: "auto" }}
-            >
-              ↺ TRY AGAIN
-            </button>
-          </div>
+            Beta
+          </span>
         </div>
-      )}
+        <div style={{ display: "flex", gap: 8 }}>
+          <Link href="/tryon/history" className="btn btn-ghost btn-sm">History</Link>
+          <Link href="/" className="btn btn-secondary btn-sm">← Back</Link>
+        </div>
+      </header>
 
-      <style>{`
-        @keyframes pixelPulse {
-          0%, 100% { opacity: 0.2; }
-          50% { opacity: 1; }
-        }
-      `}</style>
-    </main>
+      <main style={{ maxWidth: 700, margin: "0 auto", padding: "32px 16px 64px" }}>
+        {/* Tip */}
+        <div style={{
+          background: "var(--accent-soft)", border: "1px solid var(--border)",
+          borderRadius: "var(--radius)", padding: "12px 16px",
+          fontSize: "1rem", color: "var(--accent)", marginBottom: 28,
+        }}>
+          💡 <strong>Tip:</strong> 人物照建議：全身正面、背景單純，效果更佳
+        </div>
+
+        {/* Upload zones */}
+        <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
+          <UploadZone
+            label="Person photo"
+            hint={"Click or drag & drop\nFull body works best"}
+            preview={personPreview}
+            onFile={handlePersonFile}
+            disabled={isProcessing}
+          />
+          <UploadZone
+            label="Garment photo"
+            hint={"Click or drag & drop\nFlat lay works best"}
+            preview={garmentPreview}
+            onFile={handleGarmentFile}
+            disabled={isProcessing}
+          />
+        </div>
+
+        {/* Start button */}
+        <button
+          onClick={startTryon}
+          disabled={!canStart}
+          className="btn btn-primary"
+          style={{ width: "100%", justifyContent: "center", padding: "13px", fontSize: "0.95rem", borderRadius: "var(--radius)" }}
+        >
+          {isProcessing ? STATUS_LABEL[status] : "▶ Start & Check"}
+        </button>
+
+        {/* Processing */}
+        {isProcessing && (
+          <div className="card" style={{ marginTop: 20, padding: 20, textAlign: "center" }}>
+            <p style={{ fontSize: "0.85rem", color: "var(--text-2)", marginBottom: 12 }}>
+              {STATUS_LABEL[status]}
+              {status === "processing" && ` · ${elapsedSeconds}s`}
+              {category && ` · ${CATEGORY_LABEL[category] ?? category}`}
+            </p>
+            <div style={{ height: 6, background: "var(--surface-2)", borderRadius: 99, overflow: "hidden" }}>
+              <div style={{
+                height: "100%", borderRadius: 99,
+                background: "linear-gradient(90deg, var(--accent), var(--warning))",
+                width: status === "uploading" ? "30%" : status === "classifying" ? "60%" : "85%",
+                transition: "width 0.6s ease",
+              }} />
+            </div>
+          </div>
+        )}
+
+        {/* Error */}
+        {status === "error" && (
+          <div style={{
+            marginTop: 16, background: "var(--danger-soft)", border: "1px solid var(--danger)",
+            borderRadius: "var(--radius)", padding: "14px 18px",
+          }}>
+            <p style={{ fontWeight: 600, color: "var(--danger)", marginBottom: 4 }}>Something went wrong</p>
+            <p style={{ fontSize: "0.82rem", color: "var(--danger)" }}>{errorMsg}</p>
+          </div>
+        )}
+
+        {/* Result */}
+        {status === "done" && resultUrl && (
+          <div className="card" style={{ marginTop: 24, overflow: "hidden" }}>
+            <div style={{
+              padding: "14px 18px", borderBottom: "1px solid var(--border)",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}>
+              <span style={{ fontWeight: 600, color: "var(--text)" }}>
+                ✓ Result · {CATEGORY_LABEL[category] ?? category}
+              </span>
+            </div>
+            <div style={{ display: "flex" }}>
+              <div style={{ flex: 1, position: "relative" }}>
+                <img src={personPreview!} alt="Before" style={{ width: "100%", height: 380, objectFit: "cover", display: "block" }} />
+                <span style={{
+                  position: "absolute", top: 10, left: 10,
+                  background: "rgba(44,36,32,0.55)", color: "#fff",
+                  fontSize: "0.73rem", padding: "3px 10px", borderRadius: 99, fontWeight: 600,
+                }}>Before</span>
+              </div>
+              <div style={{ width: 1, background: "var(--border)" }} />
+              <div style={{ flex: 1, position: "relative" }}>
+                <img src={resultUrl} alt="After" style={{ width: "100%", height: 380, objectFit: "cover", display: "block" }} />
+                <span style={{
+                  position: "absolute", top: 10, left: 10,
+                  background: "var(--accent)", color: "#fff",
+                  fontSize: "0.73rem", padding: "3px 10px", borderRadius: 99, fontWeight: 600,
+                }}>After</span>
+              </div>
+            </div>
+            <div style={{ padding: "14px 18px", display: "flex", gap: 8 }}>
+              <a href={resultUrl} download="tryon-result.jpg" target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
+                ↓ Download
+              </a>
+              <Link href="/tryon/history" className="btn btn-secondary btn-sm">View history</Link>
+              <button onClick={() => {
+                setStatus("idle"); setResultUrl(null);
+                setPersonFile(null); setGarmentFile(null);
+                setPersonPreview(null); setGarmentPreview(null);
+                setElapsedSeconds(0);
+              }} className="btn btn-ghost btn-sm" style={{ marginLeft: "auto" }}>
+                ↺ Try again
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

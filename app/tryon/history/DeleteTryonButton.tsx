@@ -8,10 +8,12 @@ export default function DeleteTryonButton({ id }: { id: string }) {
   const router = useRouter();
 
   async function handleDelete() {
-    if (!confirm("確定要刪除這筆記錄嗎？")) return;
+    if (!confirm("Delete this fit check?")) return;
     setLoading(true);
-    await fetch(`/api/tryon-history/${id}`, { method: "DELETE" });
-    router.refresh();
+    const res = await fetch(`/api/tryon-history/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      router.refresh();
+    }
     setLoading(false);
   }
 
@@ -19,10 +21,11 @@ export default function DeleteTryonButton({ id }: { id: string }) {
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="pixel-btn pixel-btn-ghost"
-      style={{ fontSize: 7, padding: "4px 8px", color: "var(--accent-pink)" }}
+      className="btn btn-ghost btn-icon btn-sm"
+      title="Delete"
+      style={{ color: "var(--danger)" }}
     >
-      {loading ? "..." : "✕"}
+      🗑
     </button>
   );
 }

@@ -4,7 +4,7 @@ import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "Cook's Profile",
-  description: "Cook's Page",
+  description: "TCook's Profile",
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW">
-      <body>
+      <body style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

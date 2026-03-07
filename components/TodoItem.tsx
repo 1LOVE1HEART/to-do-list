@@ -11,11 +11,7 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-const priorityLabel: Record<string, string> = {
-  low: "LOW",
-  normal: "MID",
-  high: "HIGH",
-};
+const priorityLabel: Record<string, string> = { low: "Low", normal: "Normal", high: "High" };
 
 export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
   const { toast } = useToast();
@@ -35,9 +31,9 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
     if (res.ok) {
       const updated = await res.json();
       onUpdate(updated);
-      toast(updated.done ? "完成！" : "取消完成");
+      toast(updated.done ? "Completed! ✓" : "Marked active");
     } else {
-      toast("更新失敗", "error");
+      toast("Update failed", "error");
     }
     setLoading(false);
   }
@@ -48,19 +44,15 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
     const res = await fetch(`/api/todos/${todo.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: editTitle.trim(),
-        priority: editPriority,
-        dueDate: editDueDate || null,
-      }),
+      body: JSON.stringify({ title: editTitle.trim(), priority: editPriority, dueDate: editDueDate || null }),
     });
     if (res.ok) {
       const updated = await res.json();
       onUpdate(updated);
       setEditing(false);
-      toast("已更新");
+      toast("Saved");
     } else {
-      toast("更新失敗", "error");
+      toast("Update failed", "error");
     }
     setLoading(false);
   }
@@ -70,9 +62,9 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
     const res = await fetch(`/api/todos/${todo.id}`, { method: "DELETE" });
     if (res.ok) {
       onDelete(todo.id);
-      toast("已刪除");
+      toast("Deleted");
     } else {
-      toast("刪除失敗", "error");
+      toast("Delete failed", "error");
     }
     setLoading(false);
   }
@@ -85,79 +77,74 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
   return (
     <>
       <div
-        className="pixel-box"
+        className="card"
         style={{
-          padding: "14px 16px",
+          padding: "12px 16px",
           opacity: loading ? 0.6 : 1,
-          borderColor: todo.done
-            ? "var(--border)"
-            : isOverdue
-              ? "var(--accent-pink)"
-              : undefined,
           transition: "opacity 0.15s",
+          ...(isOverdue ? { borderColor: "var(--danger)", borderLeftWidth: 3 } : {}),
         }}
       >
-        <div className="flex items-center gap-2">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {/* Checkbox */}
           <button
             onClick={toggleDone}
             disabled={loading}
             aria-label={todo.done ? "Mark incomplete" : "Mark complete"}
-            style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
+            style={{ background: "none", border: "none", padding: 0, cursor: "pointer", flexShrink: 0 }}
           >
-            <div className={`pixel-checkbox ${todo.done ? "checked" : ""}`} />
+            <div className={`check-box ${todo.done ? "checked" : ""}`} />
           </button>
 
           {/* Title */}
           <span
-            className="flex-1"
             style={{
-              fontSize:12,
+              flex: 1,
+              fontSize: "0.9rem",
               wordBreak: "break-word",
+              color: todo.done ? "var(--text-3)" : "var(--text)",
               textDecoration: todo.done ? "line-through" : "none",
-              opacity: todo.done ? 0.45 : 1,
-              color: "var(--text)",
             }}
           >
             {todo.title}
           </span>
 
-          {/* Badges */}
-          <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
-            <span className={`priority-badge priority-${todo.priority}`}>
-              {priorityLabel[todo.priority] ?? todo.priority}
-            </span>
+          {/* Badges & date */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
             {todo.dueDate && (
-              <span
-                style={{
-                  fontSize: 7,
-                  color: isOverdue ? "var(--accent-pink)" : "var(--text-dim)",
-                }}
-              >
+              <span style={{
+                fontSize: "0.73rem",
+                color: isOverdue ? "var(--danger)" : "var(--text-3)",
+                fontWeight: isOverdue ? 600 : 400,
+              }}>
                 {todo.dueDate}
               </span>
             )}
+            <span className={`badge badge-${todo.priority}`}>
+              {priorityLabel[todo.priority] ?? todo.priority}
+            </span>
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
             <button
               onClick={() => setEditing(true)}
               disabled={loading}
-              className="pixel-btn pixel-btn-cyan"
-              style={{ padding: "4px 8px", fontSize: 7 }}
+              className="btn btn-ghost btn-icon btn-sm"
               aria-label="Edit"
+              title="Edit"
             >
-              EDIT
+              ✏️
             </button>
             <button
               onClick={handleDelete}
               disabled={loading}
-              className="pixel-btn pixel-btn-pink"
-              style={{ padding: "4px 8px", fontSize: 7 }}
+              className="btn btn-ghost btn-icon btn-sm"
               aria-label="Delete"
+              title="Delete"
+              style={{ color: "var(--danger)" }}
             >
-              DEL
+              🗑
             </button>
           </div>
         </div>
@@ -165,54 +152,48 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
 
       {/* Edit Modal */}
       {editing && (
-        <PixelModal title="Edit Quest" onClose={() => setEditing(false)}>
-          <div className="flex flex-col gap-4">
+        <PixelModal title="Edit Task" onClose={() => setEditing(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label className="pixel-label">任務內容</label>
+              <label className="label">Task title</label>
               <textarea
-                className="pixel-input"
+                className="input"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 rows={3}
                 style={{ resize: "vertical" }}
               />
             </div>
-            <div className="flex gap-4">
+            <div style={{ display: "flex", gap: 12 }}>
               <div style={{ flex: 1 }}>
-                <label className="pixel-label">優先度</label>
+                <label className="label">Priority</label>
                 <select
-                  className="pixel-select w-full"
+                  className="select"
+                  style={{ width: "100%" }}
                   value={editPriority}
                   onChange={(e) => setEditPriority(e.target.value as any)}
                 >
-                  <option value="low">LOW</option>
-                  <option value="normal">NORMAL</option>
-                  <option value="high">HIGH</option>
+                  <option value="low">Low</option>
+                  <option value="normal">Normal</option>
+                  <option value="high">High</option>
                 </select>
               </div>
               <div style={{ flex: 1 }}>
-                <label className="pixel-label">到期日</label>
+                <label className="label">Due date</label>
                 <input
                   type="date"
-                  className="pixel-input"
+                  className="input"
                   value={editDueDate}
                   onChange={(e) => setEditDueDate(e.target.value)}
                 />
               </div>
             </div>
-            <div className="flex gap-2 justify-end mt-2">
-              <button
-                onClick={() => setEditing(false)}
-                className="pixel-btn pixel-btn-ghost"
-              >
-                CANCEL
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
+              <button onClick={() => setEditing(false)} className="btn btn-secondary">
+                Cancel
               </button>
-              <button
-                onClick={saveEdit}
-                disabled={loading || !editTitle.trim()}
-                className="pixel-btn pixel-btn-green"
-              >
-                SAVE
+              <button onClick={saveEdit} disabled={loading || !editTitle.trim()} className="btn btn-primary">
+                Save changes
               </button>
             </div>
           </div>

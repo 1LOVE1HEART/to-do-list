@@ -18,9 +18,9 @@ export default function AdminPage() {
   const [query, setQuery] = useState("");
   const [actionId, setActionId] = useState<string | null>(null);
 
-  async function load(q = "") {
+  async function load() {
     setLoading(true);
-    const res = await fetch(`/api/admin/users?q=${encodeURIComponent(q)}`);
+    const res = await fetch("/api/admin/users?q=");
     if (res.ok) setUsers(await res.json());
     setLoading(false);
   }
@@ -35,138 +35,131 @@ export default function AdminPage() {
       body: JSON.stringify({ isBanned: !user.isBanned }),
     });
     if (res.ok) {
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === user.id ? { ...u, isBanned: !u.isBanned } : u
-        )
-      );
+      setUsers((prev) => prev.map((u) => u.id === user.id ? { ...u, isBanned: !u.isBanned } : u));
     }
     setActionId(null);
   }
 
-  const filtered = users.filter((u) =>
-    u.username.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = users.filter((u) => u.username.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <main style={{ minHeight: "100vh", padding: "24px 16px", maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <div style={{ fontSize: 12, color: "var(--accent-purple)", letterSpacing: 3 }}>
-            ADMIN PANEL
-          </div>
-          <div style={{ fontSize: 8, color: "var(--text-dim)", marginTop: 4 }}>
-            {users.length} PLAYERS REGISTERED
-          </div>
+      <header style={{
+        background: "var(--surface)", borderBottom: "1px solid var(--border)",
+        padding: "0 24px", height: 56, display: "flex", alignItems: "center",
+        justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)" }}>Admin Panel</span>
+          <span style={{
+            fontSize: "0.7rem", background: "var(--danger-soft)", color: "var(--danger)",
+            padding: "2px 8px", borderRadius: 99, fontWeight: 600, border: "1px solid var(--danger)",
+          }}>
+            {users.length} users
+          </span>
         </div>
-        <Link href="/" className="pixel-btn pixel-btn-ghost" style={{ fontSize: 7 }}>
-          ← BACK
-        </Link>
-      </div>
+        <Link href="/" className="btn btn-secondary btn-sm">← Back</Link>
+      </header>
 
-      {/* Search */}
-      <div className="mb-4">
-        <input
-          className="pixel-input"
-          placeholder="SEARCH PLAYER..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{ maxWidth: 320 }}
-        />
-      </div>
+      <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px 64px" }}>
+        {/* Search */}
+        <div style={{ marginBottom: 24, maxWidth: 320 }}>
+          <input
+            className="input"
+            placeholder="Search username…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
 
-      {/* Table */}
-      <div className="pixel-box" style={{ overflow: "auto" }}>
-        {loading ? (
-          <div style={{ padding: 40, textAlign: "center", fontSize: 9, color: "var(--text-dim)" }}>
-            LOADING<span className="cursor-blink" />
-          </div>
-        ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 8 }}>
-            <thead>
-              <tr style={{ borderBottom: "2px solid var(--border)", color: "var(--text-dim)" }}>
-                <th style={{ padding: "10px 12px", textAlign: "left" }}>USERNAME</th>
-                <th style={{ padding: "10px 12px", textAlign: "left" }}>ROLE</th>
-                <th style={{ padding: "10px 12px", textAlign: "left" }}>QUESTS</th>
-                <th style={{ padding: "10px 12px", textAlign: "left" }}>JOINED</th>
-                <th style={{ padding: "10px 12px", textAlign: "left" }}>STATUS</th>
-                <th style={{ padding: "10px 12px", textAlign: "left" }}>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((u) => (
-                <tr
-                  key={u.id}
-                  style={{
+        {/* Table */}
+        <div className="card" style={{ overflow: "auto" }}>
+          {loading ? (
+            <div style={{ padding: 48, textAlign: "center", color: "var(--text-3)", fontSize: "0.85rem" }}>
+              Loading…
+            </div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+              <thead>
+                <tr style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--border)" }}>
+                  {["Username", "Role", "Tasks", "Joined", "Status", "Actions"].map((h) => (
+                    <th key={h} style={{
+                      padding: "10px 14px", textAlign: "left", fontWeight: 600,
+                      fontSize: "0.75rem", color: "var(--text-2)", textTransform: "uppercase", letterSpacing: "0.04em",
+                    }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((u) => (
+                  <tr key={u.id} style={{
                     borderBottom: "1px solid var(--border)",
                     opacity: u.isBanned ? 0.5 : 1,
+                    transition: "background 0.12s",
                   }}
-                >
-                  <td style={{ padding: "10px 12px" }}>
-                    <Link
-                      href={`/admin/users/${u.id}`}
-                      style={{ color: "var(--accent-cyan)", textDecoration: "none" }}
-                    >
-                      {u.username}
-                    </Link>
-                  </td>
-                  <td style={{ padding: "10px 12px" }}>
-                    <span
-                      style={{
-                        color: u.role === "admin" ? "var(--accent-purple)" : "var(--text-dim)",
-                      }}
-                    >
-                      {u.role.toUpperCase()}
-                    </span>
-                  </td>
-                  <td style={{ padding: "10px 12px", color: "var(--accent-yellow)" }}>
-                    {u.todoCount ?? 0}
-                  </td>
-                  <td style={{ padding: "10px 12px", color: "var(--text-muted)" }}>
-                    {new Date(u.createdAt).toLocaleDateString("zh-TW")}
-                  </td>
-                  <td style={{ padding: "10px 12px" }}>
-                    {u.isBanned ? (
-                      <span style={{ color: "var(--accent-pink)" }}>BANNED</span>
-                    ) : (
-                      <span style={{ color: "var(--accent-green)" }}>ACTIVE</span>
-                    )}
-                  </td>
-                  <td style={{ padding: "10px 12px" }}>
-                    <div className="flex gap-2">
-                      <Link
-                        href={`/admin/users/${u.id}`}
-                        className="pixel-btn pixel-btn-cyan"
-                        style={{ padding: "4px 8px", fontSize: 7 }}
-                      >
-                        VIEW
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-2)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "")}
+                  >
+                    <td style={{ padding: "11px 14px" }}>
+                      <Link href={`/admin/users/${u.id}`} style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
+                        {u.username}
                       </Link>
-                      {u.role !== "admin" && (
-                        <button
-                          onClick={() => toggleBan(u)}
-                          disabled={actionId === u.id}
-                          className={`pixel-btn ${u.isBanned ? "pixel-btn-green" : "pixel-btn-pink"}`}
-                          style={{ padding: "4px 8px", fontSize: 7 }}
-                        >
-                          {u.isBanned ? "UNBAN" : "BAN"}
-                        </button>
+                    </td>
+                    <td style={{ padding: "11px 14px", color: "var(--text-2)", textTransform: "capitalize" }}>
+                      {u.role}
+                    </td>
+                    <td style={{ padding: "11px 14px", fontWeight: 600, color: "var(--text)" }}>
+                      {u.todoCount ?? 0}
+                    </td>
+                    <td style={{ padding: "11px 14px", color: "var(--text-3)", fontSize: "0.8rem" }}>
+                      {new Date(u.createdAt).toLocaleDateString("zh-TW")}
+                    </td>
+                    <td style={{ padding: "11px 14px" }}>
+                      {u.isBanned ? (
+                        <span style={{
+                          background: "var(--danger-soft)", color: "var(--danger)",
+                          padding: "2px 8px", borderRadius: 99, fontSize: "0.72rem", fontWeight: 600,
+                          border: "1px solid var(--danger)",
+                        }}>Banned</span>
+                      ) : (
+                        <span style={{
+                          background: "var(--sage-soft)", color: "var(--sage)",
+                          padding: "2px 8px", borderRadius: 99, fontSize: "0.72rem", fontWeight: 600,
+                          border: "1px solid var(--sage)",
+                        }}>Active</span>
                       )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ padding: 32, textAlign: "center", color: "var(--text-muted)" }}>
-                    NO PLAYERS FOUND
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </main>
+                    </td>
+                    <td style={{ padding: "11px 14px" }}>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <Link href={`/admin/users/${u.id}`} className="btn btn-ghost btn-sm">View</Link>
+                        {u.role !== "admin" && (
+                          <button
+                            onClick={() => toggleBan(u)}
+                            disabled={actionId === u.id}
+                            className={u.isBanned ? "btn btn-sage btn-sm" : "btn btn-danger btn-sm"}
+                          >
+                            {u.isBanned ? "Unban" : "Ban"}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan={6} style={{ padding: 40, textAlign: "center", color: "var(--text-3)", fontSize: "0.85rem" }}>
+                      No users found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }

@@ -32,7 +32,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             className={`toast toast-${t.type}`}
             role="alert"
           >
-            {t.type === "success" ? "[ OK ]" : "[ ERR ]"} {t.message}
+            {t.type === "success" ? "✓ " : "✕ "}{t.message}
           </div>
         ))}
       </div>
