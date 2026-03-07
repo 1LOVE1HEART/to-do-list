@@ -3,8 +3,8 @@ import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
-  title: "TRIPLE PLANCK — Quest List",
-  description: "Pixel art todo list. Log in and conquer your quests.",
+  title: "Cook's Profile",
+  description: "Cook's Page",
 };
 
 export default function RootLayout({

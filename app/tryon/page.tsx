@@ -208,7 +208,7 @@ export default function TryonPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <div style={{ fontSize: 14, color: "var(--accent-green)", letterSpacing: 3, textShadow: "0 0 15px rgba(0,255,136,0.4)" }}>
-            TRIPLE PLANCK
+            Now Look
           </div>
           <div style={{ fontSize: 8, color: "var(--text-dim)", marginTop: 4, letterSpacing: 2 }}>
             ▶ FIT CHECK MODULE
