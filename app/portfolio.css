@@ -4,10 +4,10 @@
   column-gap: 16px;
 }
 @media (min-width: 640px) {
-  .portfolio-grid { column-count: 2; }
+  .portfolio-grid { column-count: 1; }
 }
 @media (min-width: 1024px) {
-  .portfolio-grid { column-count: 3; }
+  .portfolio-grid { column-count: 2; }
 }
 
 .portfolio-item {
