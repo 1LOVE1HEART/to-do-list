@@ -5,7 +5,7 @@ import Link from "next/link";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import "../portfolio.css";
 
-const CATEGORIES = ["All", "Portrait", "Architecture", "Nature"];
+const CATEGORIES = ["All", "Editing", "Grading"];
 
 // Mock dataset with before and after images
 const PHOTOS = [
@@ -14,63 +14,63 @@ const PHOTOS = [
     beforeUrl: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80&sat=-100", 
     afterUrl: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80", 
     title: "Neon Tokyo", 
-    category: "Architecture"
+    category: "Grading"
   },
   {
     id: 2,
     beforeUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=60&bri=-20", 
     afterUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80", 
     title: "Warm Coffee", 
-    category: "Portrait"
+    category: "Editing"
   },
   {
     id: 3,
     beforeUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=60&con=-20", 
     afterUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", 
     title: "Alpine Peaks", 
-    category: "Nature"
+    category: "Grading"
   },
   {
     id: 4,
     beforeUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80&sat=-50", 
     afterUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80", 
     title: "Studio Light", 
-    category: "Portrait"
+    category: "Editing"
   },
   {
     id: 5,
     beforeUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80&sat=-80", 
     afterUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80", 
     title: "Concrete Jungle", 
-    category: "Architecture"
+    category: "Grading"
   },
   {
     id: 6,
     beforeUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80&con=-30", 
     afterUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", 
     title: "Autumn Road", 
-    category: "Nature"
+    category: "Grading"
   },
   {
     id: 7,
-    beforeUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80&con=-30", 
-    afterUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", 
-    title: "Autumn Road", 
-    category: "Nature"
+    beforeUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=60&bri=-20", 
+    afterUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80", 
+title: "Autumn Road", 
+    category: "Editing"
   },
   {
     id: 8,
     beforeUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80&sat=-80", 
     afterUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80", 
     title: "Concrete Jungle", 
-    category: "Architecture"
+    category: "Grading"
   },
   {
     id: 9,
     beforeUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80&con=-30", 
     afterUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", 
     title: "Autumn Road", 
-    category: "Nature"
+    category: "Editing"
   },
 ];
 
@@ -108,7 +108,7 @@ export default function PortfolioPage() {
       <main style={{ maxWidth: 1400, margin: "0 auto", padding: "24px 16px 80px", }}>
         
         {/* Split Layout Container */}
-        <div className="flex flex-col md:flex-row" style={{ gap: 32 }}>
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-8">
           
           {/* Left Pane: Before / After Slider */}
           <div style={{ flex: 2, position: "relative" }}>
@@ -118,7 +118,7 @@ export default function PortfolioPage() {
                 beforeUrl={activePhoto.beforeUrl} 
                 afterUrl={activePhoto.afterUrl} 
               />
-              <div style={{ marginTop: 16, textAlign: "center" }}>
+              <div style={{ marginTop: "0.5rem", textAlign: "center" }}>
                 <h2 style={{ fontSize: "1.4rem", fontWeight: 700 }}>{activePhoto.title}</h2>
                 <p style={{ color: "var(--text-2)", fontSize: "0.9rem" }}>{activePhoto.category}</p>
               </div>
@@ -126,10 +126,10 @@ export default function PortfolioPage() {
           </div>
 
           {/* Right Pane: Filters & Gallery Grid */}
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="flex-1 min-w-0 flex flex-col md:max-h-[80vh]">
             
             {/* Filters */}
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 24, justifyContent: "flex-end" }}>
+            <div className="gap-2 mb-2 sm:mb-6" style={{ display: "flex", marginBottom: "0.8rem", flexWrap: "wrap", justifyContent: "center", flexShrink: 0 }}>
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
@@ -142,7 +142,7 @@ export default function PortfolioPage() {
             </div>
 
             {/* Gallery Grid */}
-            <div className="portfolio-grid" >
+            <div className="portfolio-grid" style={{ flex: 1, minHeight: 0 }}>
               {filteredPhotos.map((photo) => (
                 <div
                   key={photo.id}

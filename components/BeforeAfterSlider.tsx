@@ -48,7 +48,7 @@ export default function BeforeAfterSlider({ beforeUrl, afterUrl }: Props) {
   return (
     <div
       ref={containerRef}
-      className="card-lg h-[45vh] sm:h-[80vh]"
+      className="card-lg h-[40vh] sm:h-[80vh]"
       style={{
         position: "relative",
         width: "100%",
