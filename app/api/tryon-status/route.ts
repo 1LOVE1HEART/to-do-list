@@ -8,9 +8,6 @@ const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   const { searchParams } = new URL(req.url);
   const predictionId = searchParams.get("predictionId");
@@ -29,14 +26,16 @@ export async function GET(req: NextRequest) {
       ? prediction.output[0]
       : (prediction.output as string);
 
-    // Save to DB
-    await db.insert(tryonResults).values({
-      userId: session.user.id,
-      personImgUrl,
-      garmentImgUrl,
-      resultImgUrl,
-      category,
-    });
+    // Save to DB only if authenticated
+    if (session?.user?.id) {
+      await db.insert(tryonResults).values({
+        userId: session.user.id,
+        personImgUrl,
+        garmentImgUrl,
+        resultImgUrl,
+        category,
+      });
+    }
 
     return NextResponse.json({ status: "succeeded", resultImgUrl });
   }

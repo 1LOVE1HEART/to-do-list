@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
+import { NextAuthProvider } from "@/components/SessionProvider";
 
 export const metadata: Metadata = {
   title: "Cook's Profile",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="zh-TW">
       <body style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-        <ToastProvider>{children}</ToastProvider>
+        <NextAuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { checkTryonRateLimit } from "@/lib/rateLimit";
+import { checkTryonRateLimit, checkGuestTryonRateLimit } from "@/lib/rateLimit";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Replicate from "replicate";
 
@@ -36,28 +36,31 @@ async function classifyGarment(imageUrl: string): Promise<GarmentCategory> {
   }
 }
 
-async function fetchImageAsBase64(url: string): Promise<string> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Could not fetch image for Gemini");
-  const buffer = await res.arrayBuffer();
-  return Buffer.from(buffer).toString("base64");
-}
-
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  
+  // 1) Define limit result
+  let limitResult: { success: boolean; remaining: number; reset: number };
+  
+  // 2) Check limits based on auth state
+  if (session?.user?.id) {
+    limitResult = await checkTryonRateLimit(session.user.id);
+  } else {
+    const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "127.0.0.1";
+    limitResult = await checkGuestTryonRateLimit(ip);
   }
 
-  const { success, remaining, reset } = await checkTryonRateLimit(session.user.id);
+  // 3) Enforce limit
+  const { success, remaining, reset } = limitResult;
   if (!success) {
     const resetDate = new Date(reset);
+    const timeStr = resetDate.toLocaleTimeString("zh-TW");
+    const errMsg = session?.user?.id 
+      ? `每小時最多 5 次換裝，請於 ${timeStr} 後再試。`
+      : `訪客每半天最多使用 3 次，請登入享有更高次數，或於 ${timeStr} 後再試。`;
+    
     return NextResponse.json(
-      {
-        error: `每小時最多 5 次換裝，請於 ${resetDate.toLocaleTimeString("zh-TW")} 後再試。`,
-        remaining: 0,
-        reset,
-      },
+      { error: errMsg, remaining: 0, reset },
       { status: 429 }
     );
   }

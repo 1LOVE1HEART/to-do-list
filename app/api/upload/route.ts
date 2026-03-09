@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { uploadImage } from "@/lib/cloudinary";
+import { checkGuestUploadRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
+  
+  // If not authenticated, enforce guest rate limit using IP
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Get IP address from headers, fallback to "127.0.0.1" for local testing
+    const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "127.0.0.1";
+    
+    // Check guest upload rate limit
+    const { success, remaining, reset } = await checkGuestUploadRateLimit(ip);
+    if (!success) {
+      return NextResponse.json(
+        { error: "訪客上傳次數已達上限 (每日10次)，請登入以繼續使用。", remaining, reset },
+        { status: 429 }
+      );
+    }
   }
 
   // Debug: check env vars

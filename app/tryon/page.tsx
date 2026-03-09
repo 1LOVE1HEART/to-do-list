@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 type Status = "idle" | "uploading" | "classifying" | "processing" | "done" | "error";
 
@@ -112,6 +113,8 @@ const CATEGORY_LABEL: Record<string, string> = {
 };
 
 export default function TryonPage() {
+  const sessionData = useSession();
+  const session = sessionData?.data;
   const [personFile, setPersonFile] = useState<File | null>(null);
   const [garmentFile, setGarmentFile] = useState<File | null>(null);
   const [personPreview, setPersonPreview] = useState<string | null>(null);
@@ -208,16 +211,22 @@ export default function TryonPage() {
         justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)" }}>Now Look</span>
+          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)", letterSpacing: "-0.02em" }}>
+            Now Look
+          </span>
           <span style={{
             fontSize: "0.7rem", background: "var(--accent-soft)", color: "var(--accent)",
             padding: "2px 8px", borderRadius: 99, fontWeight: 600,
           }}>
-            Beta
+            Virtual Try-on
           </span>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <Link href="/tryon/history" className="btn btn-ghost btn-sm">History</Link>
+          {session ? (
+            <Link href="/tryon/history" className="btn btn-ghost btn-sm">History</Link>
+          ) : (
+            <Link href="/login" className="btn btn-ghost btn-sm"></Link>
+          )}
           {/* <Link href="/" className="btn btn-secondary btn-sm">← Back</Link> */}
         </div>
       </header>
@@ -225,11 +234,13 @@ export default function TryonPage() {
       <main style={{ maxWidth: 700, margin: "0 auto", padding: "32px 16px 64px" }}>
         {/* Tip */}
         <div style={{
-          background: "var(--accent-soft)", border: "1px solid var(--border)",
+          background: "var(--surface)", border: "1px dashed var(--accent)",
           borderRadius: "var(--radius)", padding: "12px 16px",
           fontSize: "1rem", color: "var(--accent)", marginBottom: 28,
+          lineHeight: 1.5
         }}>
-          💡 <strong>Tip:</strong> 人物照建議：全身正面、背景單純，效果更佳。 🚩每日使用上限：3次
+          💡 <strong>Tip:</strong> 人物照建議：全身正面、背景單純，效果更佳。<br/>
+          🚩 {session ? "會員專屬：每小時 5 次" : "訪客上限：每 12 小時 3 次"}
         </div>
 
         {/* Upload zones */}
@@ -243,7 +254,7 @@ export default function TryonPage() {
           />
           <UploadZone
             label="Garment photo"
-            hint={"Click or drag & drop\nFlat lay works best"}
+            hint={"Click or drag & drop \n Flat lay works best"}
             preview={garmentPreview}
             onFile={handleGarmentFile}
             disabled={isProcessing}
