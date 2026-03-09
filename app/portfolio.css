@@ -3,10 +3,13 @@
   display: flex;
   overflow-x: auto;
   gap: 16px;
-  padding-bottom: 16px;
+  padding-bottom: 8px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  /* Mobile Height & Alignment */
+  height: 180px; 
+  align-items: center;
 }
 .portfolio-grid::-webkit-scrollbar {
   display: none;
@@ -21,6 +24,7 @@
     overflow-x: hidden;
     padding-right: 8px;
     scrollbar-width: thin;
+    height: auto; /* Reset specifically for desktop independent scroll if needed */
   }
   .portfolio-grid::-webkit-scrollbar {
     display: block;
@@ -33,7 +37,9 @@
 }
 
 .portfolio-item {
-  flex: 0 0 85%;
+  flex: 0 0 auto; /* Allow items to keep their width based on image */
+  height: 85%;    /* Occupy 85% of grid height to keep alignment visual */
+  max-width: 85%;
   scroll-snap-align: center;
   margin-bottom: 0;
   border-radius: var(--radius-lg);
@@ -41,21 +47,31 @@
   position: relative;
   cursor: pointer;
   background: var(--surface-2);
-}
-
-@media (min-width: 768px) {
-  .portfolio-item {
-    break-inside: avoid;
-    margin-bottom: 16px;
-    width: 100%;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .portfolio-item img {
   display: block;
-  width: 100%;
-  height: auto;
+  width: auto;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.4s ease;
+}
+
+@media (min-width: 768px) {
+  .portfolio-item {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+  .portfolio-item img {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .portfolio-overlay {

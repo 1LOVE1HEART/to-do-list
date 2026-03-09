@@ -218,7 +218,7 @@ export default function TryonPage() {
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Link href="/tryon/history" className="btn btn-ghost btn-sm">History</Link>
-          <Link href="/" className="btn btn-secondary btn-sm">← Back</Link>
+          {/* <Link href="/" className="btn btn-secondary btn-sm">← Back</Link> */}
         </div>
       </header>
 
@@ -229,7 +229,7 @@ export default function TryonPage() {
           borderRadius: "var(--radius)", padding: "12px 16px",
           fontSize: "1rem", color: "var(--accent)", marginBottom: 28,
         }}>
-          💡 <strong>Tip:</strong> 人物照建議：全身正面、背景單純，效果更佳
+          💡 <strong>Tip:</strong> 人物照建議：全身正面、背景單純，效果更佳。 🚩每日使用上限：3次
         </div>
 
         {/* Upload zones */}

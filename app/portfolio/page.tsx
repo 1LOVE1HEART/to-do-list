@@ -91,7 +91,7 @@ export default function PortfolioPage() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)", letterSpacing: "-0.02em" }}>
-            Cook's Profile
+            Cook's 
           </span>
           <span style={{
             fontSize: "0.7rem", background: "var(--accent-soft)", color: "var(--accent)",
@@ -100,12 +100,12 @@ export default function PortfolioPage() {
             Portfolio
           </span>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        {/* <div style={{ display: "flex", gap: 8 }}>
           <Link href="/" className="btn btn-secondary btn-sm">← Back to Tasks</Link>
-        </div>
+        </div> */}
       </header>
 
-      <main style={{ maxWidth: 1400, margin: "0 auto", padding: "24px 16px 80px", }}>
+      <main style={{ maxWidth: 1400, margin: "0 auto", padding: "24px 16px 10px", }}>
         
         {/* Split Layout Container */}
         <div className="flex flex-col md:flex-row gap-3 sm:gap-8">
@@ -142,7 +142,7 @@ export default function PortfolioPage() {
             </div>
 
             {/* Gallery Grid */}
-            <div className="portfolio-grid" style={{ flex: 1, minHeight: 0 }}>
+            <div className="portfolio-grid" style={{ minHeight: 0 }}>
               {filteredPhotos.map((photo) => (
                 <div
                   key={photo.id}

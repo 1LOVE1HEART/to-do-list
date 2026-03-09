@@ -4,7 +4,7 @@ import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "Cook's Profile",
-  description: "TCook's Profile",
+  description: "Cook's Profile",
 };
 
 export default function RootLayout({
