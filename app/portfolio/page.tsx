@@ -11,66 +11,88 @@ const CATEGORIES = ["All", "Editing", "Grading"];
 const PHOTOS = [
   {
     id: 1,
-    beforeUrl: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80&sat=-100", 
-    afterUrl: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80", 
-    title: "Neon Tokyo", 
-    category: "Grading"
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773208972/2026-01-04-023_b4_pzhogd.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207441/2026-01-04-023-%E7%B7%A8%E8%BC%AF_afsn1v.jpg", 
+    title: "拍攝＆修圖", 
+    category: "Editing"
   },
   {
     id: 2,
-    beforeUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=60&bri=-20", 
-    afterUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80", 
-    title: "Warm Coffee", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207448/body1_b4_jo2wk2.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207453/body1_ck80hc.jpg", 
+    title: "上胸修飾", 
     category: "Editing"
   },
   {
     id: 3,
-    beforeUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=60&con=-20", 
-    afterUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", 
-    title: "Alpine Peaks", 
-    category: "Grading"
-  },
-  {
-    id: 4,
-    beforeUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80&sat=-50", 
-    afterUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80", 
-    title: "Studio Light", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207445/body2_b4_iq4mwf.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207448/body2_kn92ed.jpg", 
+    title: "頸紋修飾", 
     category: "Editing"
   },
   {
-    id: 5,
-    beforeUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80&sat=-80", 
-    afterUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80", 
-    title: "Concrete Jungle", 
+    id: 4,
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207433/kurosaki_b4_xwhdns.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207443/kurosaki_c9cd65.jpg", 
+    title: "青橙色調", 
     category: "Grading"
+  },
+  {
+    id: 5,
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207469/handsome-man-with-blue-glasses-looking-up_b4_mnvlvp.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773208971/handsome-man-with-blue-glasses-looking-up_%E6%8B%B7%E8%B2%9D_aiwzmx.jpg", 
+    title: "皺摺處理", 
+    category: "Editing"
   },
   {
     id: 6,
-    beforeUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80&con=-30", 
-    afterUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", 
-    title: "Autumn Road", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207432/1_n2_plan_yitxix.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207445/1_n2_plan%E8%AA%BF%E8%89%B2_tltyts.jpg", 
+    title: "日系人像", 
     category: "Grading"
+
   },
   {
     id: 7,
-    beforeUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=60&bri=-20", 
-    afterUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80", 
-title: "Autumn Road", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207453/young-happy-bride-wedding-dress-groom_b4_rvtucy.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207465/young-happy-bride-wedding-dress-groom_muayy4.jpg", 
+    title: "增添光源", 
     category: "Editing"
   },
   {
     id: 8,
-    beforeUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80&sat=-80", 
-    afterUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80", 
-    title: "Concrete Jungle", 
-    category: "Grading"
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207468/brides-stands-park-holds-wedding-bouquet-her-back-without-face_b4_hhzcjv.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773208967/brides-stands-park-holds-wedding-bouquet-her-back-without-face_fpgvxf.jpg", 
+    title: "裙擺延伸", 
+    category: "Editing"
   },
   {
     id: 9,
-    beforeUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80&con=-30", 
-    afterUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", 
-    title: "Autumn Road", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207442/%E7%A3%A8%E7%9A%AE%E5%94%87%E8%89%B2_xi4uew.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207443/%E7%A3%A8%E7%9A%AE%E5%94%87%E8%89%B2_%E6%8B%B7%E8%B2%9D_fwgco1.jpg", 
+    title: "磨膚唇色", 
     category: "Editing"
+  },
+  {
+    id: 10,
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207440/rain_b4_a3l2is.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207443/rain_xs8ffv.jpg", 
+    title: "青橙色調", 
+    category: "Grading"
+  },
+  {
+    id: 11,
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207443/orin4_b4_jwacqg.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207437/orin4_bacjyj.png", 
+    title: "通透感", 
+    category: "Grading"
+  },
+  {
+    id: 12,
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207432/2_n2_plan_nw9h72.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207436/2_n2_plan%E8%AA%BF%E8%89%B2_ih3pc5.jpg", 
+    title: "日系人像", 
+    category: "Grading"
   },
 ];
 
