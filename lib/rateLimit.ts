@@ -7,10 +7,16 @@ let tryonRatelimit: Ratelimit | null = null;
 let guestTryonRatelimit: Ratelimit | null = null;
 let guestUploadRatelimit: Ratelimit | null = null;
 
+const getRedisConfig = () => {
+  const url = process.env.UPSTASH_REDIS_REST_URL?.replace(/^"|"$/g, "");
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.replace(/^"|"$/g, "");
+  return { url: url!, token: token! };
+};
+
 function getRatelimit() {
   if (!ratelimit) {
     ratelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: new Redis(getRedisConfig()),
       limiter: Ratelimit.slidingWindow(5, "1 m"),
       analytics: true,
       prefix: "triple-planck:register",
@@ -22,7 +28,7 @@ function getRatelimit() {
 function getTryonRatelimit() {
   if (!tryonRatelimit) {
     tryonRatelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: new Redis(getRedisConfig()),
       limiter: Ratelimit.slidingWindow(5, "1 h"),
       analytics: true,
       prefix: "triple-planck:tryon",
@@ -34,7 +40,7 @@ function getTryonRatelimit() {
 function getGuestTryonRatelimit() {
   if (!guestTryonRatelimit) {
     guestTryonRatelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: new Redis(getRedisConfig()),
       limiter: Ratelimit.slidingWindow(3, "12 h"),
       analytics: true,
       prefix: "triple-planck:guest-tryon",
@@ -46,7 +52,7 @@ function getGuestTryonRatelimit() {
 function getGuestUploadRatelimit() {
   if (!guestUploadRatelimit) {
     guestUploadRatelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: new Redis(getRedisConfig()),
       limiter: Ratelimit.slidingWindow(10, "1 d"),
       analytics: true,
       prefix: "triple-planck:guest-upload",
@@ -54,6 +60,7 @@ function getGuestUploadRatelimit() {
   }
   return guestUploadRatelimit;
 }
+
 
 export async function checkRateLimit(ip: string): Promise<{
   success: boolean;

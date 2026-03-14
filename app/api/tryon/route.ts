@@ -11,7 +11,7 @@ type GarmentCategory = "upper_body" | "lower_body" | "dress";
 
 async function classifyGarment(imageUrl: string): Promise<GarmentCategory> {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
     const imgRes = await fetch(imageUrl);
     const contentType = imgRes.headers.get("content-type") || "image/jpeg";
     const buffer = await imgRes.arrayBuffer();
