@@ -37,47 +37,46 @@ async function classifyGarment(imageUrl: string): Promise<GarmentCategory> {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  
-  // 1) Define limit result
-  let limitResult: { success: boolean; remaining: number; reset: number };
-  
-  // 2) Check limits based on auth state
-  if (session?.user?.id) {
-    limitResult = await checkTryonRateLimit(session.user.id);
-  } else {
-    const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "127.0.0.1";
-    limitResult = await checkGuestTryonRateLimit(ip);
-  }
-
-  // 3) Enforce limit
-  const { success, remaining, reset } = limitResult;
-  if (!success) {
-    const resetDate = new Date(reset);
-    const timeStr = resetDate.toLocaleTimeString("zh-TW");
-    const errMsg = session?.user?.id 
-      ? `每小時最多 5 次換裝，請於 ${timeStr} 後再試。`
-      : `訪客每半天最多使用 3 次，請登入享有更高次數，或於 ${timeStr} 後再試。`;
-    
-    return NextResponse.json(
-      { error: errMsg, remaining: 0, reset },
-      { status: 429 }
-    );
-  }
-
-  const body = await req.json();
-  const { personImgUrl, garmentImgUrl } = body;
-
-  if (!personImgUrl || !garmentImgUrl) {
-    return NextResponse.json({ error: "Missing image URLs" }, { status: 400 });
-  }
-
   try {
+    const session = await auth();
+    
+    // 1) Define limit result
+    let limitResult: { success: boolean; remaining: number; reset: number };
+    
+    // 2) Check limits based on auth state
+    if (session?.user?.id) {
+      limitResult = await checkTryonRateLimit(session.user.id);
+    } else {
+      const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "127.0.0.1";
+      limitResult = await checkGuestTryonRateLimit(ip);
+    }
+
+    // 3) Enforce limit
+    const { success, remaining, reset } = limitResult;
+    if (!success) {
+      const resetDate = new Date(reset);
+      const timeStr = resetDate.toLocaleTimeString("zh-TW");
+      const errMsg = session?.user?.id 
+        ? `每小時最多 5 次換裝，請於 ${timeStr} 後再試。`
+        : `訪客每半天最多使用 3 次，請登入享有更高次數，或於 ${timeStr} 後再試。`;
+      
+      return NextResponse.json(
+        { error: errMsg, remaining: 0, reset },
+        { status: 429 }
+      );
+    }
+
+    const body = await req.json();
+    const { personImgUrl, garmentImgUrl } = body;
+
+    if (!personImgUrl || !garmentImgUrl) {
+      return NextResponse.json({ error: "Missing image URLs" }, { status: 400 });
+    }
+
     // Step 1: Classify garment type
-    // Using a separate try/catch in the function or fallback
     const category = await classifyGarment(garmentImgUrl);
 
-    // Step 2: Start Replicate prediction (IDM-VTON)
+    // Step 2: Start Replicate prediction
     const prediction = await replicate.predictions.create({
       version: "c871bb9b046607b680449ecbae55fd8c6d945e0a1948644bf2361b3d021d3ff4",
       input: {
@@ -104,6 +103,10 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error("Try-on prediction error:", error);
-    return NextResponse.json({ error: error.message || "Something went wrong during try-on start" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "伺服器發生未知錯誤" },
+      { status: 500 }
+    );
   }
 }
+

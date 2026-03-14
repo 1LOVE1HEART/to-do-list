@@ -138,8 +138,16 @@ export default function TryonPage() {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Upload failed");
+    
+    let data;
+    try {
+      const text = await res.text();
+      data = text ? JSON.parse(text) : {};
+    } catch (e) {
+      throw new Error(`伺服器傳回了無效的格式 (解析失敗)`);
+    }
+
+    if (!res.ok) throw new Error(data.error || `上傳失敗 (${res.status})`);
     return data.url;
   }
 
@@ -155,19 +163,25 @@ export default function TryonPage() {
         uploadFile(garmentFile),
       ]);
 
-      setStatus("classifying");
       const tryonRes = await fetch("/api/tryon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ personImgUrl, garmentImgUrl }),
       });
 
-      if (!tryonRes.ok) {
-        const err = await tryonRes.json();
-        throw new Error(err.error ?? "Request failed");
+      let tryonData;
+      try {
+        const text = await tryonRes.text();
+        tryonData = text ? JSON.parse(text) : {};
+      } catch (e) {
+        throw new Error("伺服器準備換裝時發生錯誤 (返回格式錯誤)");
       }
 
-      const { predictionId, category: cat } = await tryonRes.json();
+      if (!tryonRes.ok) {
+        throw new Error(tryonData.error ?? `請求失敗 (${tryonRes.status})`);
+      }
+
+      const { predictionId, category: cat } = tryonData;
       setCategory(cat);
       setStatus("processing");
 
@@ -181,18 +195,28 @@ export default function TryonPage() {
         const statusRes = await fetch(
           `/api/tryon-status?predictionId=${predictionId}&personImgUrl=${encodeURIComponent(personImgUrl)}&garmentImgUrl=${encodeURIComponent(garmentImgUrl)}&category=${cat}`
         );
-        const data = await statusRes.json();
-        if (data.status === "succeeded") {
+        
+        let statusData;
+        try {
+          const text = await statusRes.text();
+          statusData = text ? JSON.parse(text) : {};
+        } catch (e) {
+          console.error("Status check parse error", e);
+          continue; // 狀態檢查失敗先繼續試
+        }
+
+        if (statusData.status === "succeeded") {
           clearInterval(timer);
-          setResultUrl(data.resultImgUrl);
+          setResultUrl(statusData.resultImgUrl);
           setStatus("done");
           break;
         }
-        if (data.status === "failed") {
+        if (statusData.status === "failed") {
           clearInterval(timer);
-          throw new Error(data.error ?? "Generation failed");
+          throw new Error(statusData.error ?? "生成失敗");
         }
       }
+
     } catch (e: unknown) {
       setStatus("error");
       setErrorMsg(e instanceof Error ? e.message : "Unknown error");
