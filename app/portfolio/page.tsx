@@ -11,8 +11,8 @@ const CATEGORIES = ["All", "Editing", "Grading"];
 const PHOTOS = [
   {
     id: 1,
-    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773208972/2026-01-04-023_b4_pzhogd.jpg", 
-    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207441/2026-01-04-023-%E7%B7%A8%E8%BC%AF_afsn1v.jpg", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773458518/2026-01-04-023_b4_qcmtr2.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773459247/2026-01-04-023-%E7%B7%A8%E8%BC%AF_e9gfdr.jpg", 
     title: "拍攝＆修圖", 
     category: "Editing"
   },
@@ -39,8 +39,8 @@ const PHOTOS = [
   },
   {
     id: 5,
-    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207469/handsome-man-with-blue-glasses-looking-up_b4_mnvlvp.jpg", 
-    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773208971/handsome-man-with-blue-glasses-looking-up_%E6%8B%B7%E8%B2%9D_aiwzmx.jpg", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773459895/man-with-blue-glasses-looking-up_b4_wcr0kx.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773458535/man-with-blue-glasses-looking-up_zn51zj.jpg", 
     title: "皺摺處理", 
     category: "Editing"
   },
@@ -50,19 +50,18 @@ const PHOTOS = [
     afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207445/1_n2_plan%E8%AA%BF%E8%89%B2_tltyts.jpg", 
     title: "日系人像", 
     category: "Grading"
-
   },
   {
     id: 7,
-    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207453/young-happy-bride-wedding-dress-groom_b4_rvtucy.jpg", 
-    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207465/young-happy-bride-wedding-dress-groom_muayy4.jpg", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773458713/young-happy-bride-wedding-dress-groom_b4_rrljl0.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773458719/young-happy-bride-wedding-dress-groom_euqbjs.jpg", 
     title: "增添光源", 
     category: "Editing"
   },
   {
     id: 8,
-    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773207468/brides-stands-park-holds-wedding-bouquet-her-back-without-face_b4_hhzcjv.jpg", 
-    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773208967/brides-stands-park-holds-wedding-bouquet-her-back-without-face_fpgvxf.jpg", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773458457/brides-stands-park-holds-wedding-bouquet-her-back-without-face_b4_l8qnws.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773458452/brides-stands-park-holds-wedding-bouquet-her-back-without-face_um3lih.jpg", 
     title: "裙擺延伸", 
     category: "Editing"
   },
