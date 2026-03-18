@@ -236,7 +236,7 @@ export default function TryonPage() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)", letterSpacing: "-0.02em" }}>
-            Now Look
+            Now Look 41J 試衣間
           </span>
           <span style={{
             fontSize: "0.7rem", background: "var(--accent-soft)", color: "var(--accent)",
@@ -270,15 +270,15 @@ export default function TryonPage() {
         {/* Upload zones */}
         <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
           <UploadZone
-            label="Person photo"
-            hint={"Click or drag & drop\nFull body works best"}
+            label="請上傳人物圖片"
+            hint={"點擊或拖曳上傳圖片，背景純淨全身照片效果更佳"}
             preview={personPreview}
             onFile={handlePersonFile}
             disabled={isProcessing}
           />
           <UploadZone
-            label="Garment photo"
-            hint={"Click or drag & drop \n Flat lay works best"}
+            label="請上傳衣物圖片"
+            hint={"點擊或拖曳上傳圖片，建議單一衣物，避免多件重疊"}
             preview={garmentPreview}
             onFile={handleGarmentFile}
             disabled={isProcessing}
@@ -292,7 +292,7 @@ export default function TryonPage() {
           className="btn btn-primary"
           style={{ width: "100%", justifyContent: "center", padding: "13px", fontSize: "0.95rem", borderRadius: "var(--radius)" }}
         >
-          {isProcessing ? STATUS_LABEL[status] : "▶ Start & Check"}
+          {isProcessing ? STATUS_LABEL[status] : "▶ 開始換裝～"}
         </button>
 
         {/* Processing */}
