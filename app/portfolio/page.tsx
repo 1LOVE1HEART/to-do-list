@@ -39,9 +39,9 @@ const PHOTOS = [
   },
   {
     id: 5,
-    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739600/handsome-man-with-blue_b4_esg6bv.jpg", 
-    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739599/handsome-man-with-blue_emuaew.jpg", 
-    title: "衣服皺摺處理", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739845/wedding-bouquet_b4_w4wfcr.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739843/wedding-bouquet_rz4ze1.jpg", 
+    title: "裙擺延伸", 
     category: "修圖"
   },
   {
@@ -67,9 +67,9 @@ const PHOTOS = [
   },
   {
     id: 8,
-    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739845/wedding-bouquet_b4_w4wfcr.jpg", 
-    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739843/wedding-bouquet_rz4ze1.jpg", 
-    title: "裙擺延伸", 
+    beforeUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739600/handsome-man-with-blue_b4_esg6bv.jpg", 
+    afterUrl: "https://res.cloudinary.com/dkrjivn7z/image/upload/v1773739599/handsome-man-with-blue_emuaew.jpg", 
+    title: "衣服皺摺處理", 
     category: "修圖"
   },
   {
